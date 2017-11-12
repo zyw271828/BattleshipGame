@@ -4,7 +4,12 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.awt.Font;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,7 +51,7 @@ public class WindowView {
 		
 		frame = new JFrame();
 		frame.setTitle("战舰游戏");
-		frame.setBounds(100, 100, 580, 440);
+		frame.setBounds(100, 100, gridLength * 50 + 230, gridLength * 50 + 90);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.getContentPane().setLayout(null);
@@ -67,6 +72,8 @@ public class WindowView {
 //			e1.printStackTrace();
 //		}
 //		bootLabel.setVisible(false);
+		// 播放 Ocean_Sea.wav
+		playSound("resources/audio/Ocean_Sea.wav");
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(30, 30, gridLength * 50, gridLength * 50);
@@ -77,20 +84,20 @@ public class WindowView {
 		textArea.setFont(new Font("Dialog", Font.PLAIN, 18));
 		textArea.setLineWrap(true);
 		textArea.setEditable(false);
-		textArea.setBounds(400, 30, 150, 350);
+		textArea.setBounds(gridLength * 50 + 50, 30, 150, gridLength * 50);
 		frame.getContentPane().add(textArea);
 		textArea.setColumns(10);
 		textArea.setText(game.getDescription());
 		
 		scrollPane = new JScrollPane(textArea);
-		scrollPane.setBounds(400, 30, 150, 350);
+		scrollPane.setBounds(textArea.getBounds());
 		frame.getContentPane().add(scrollPane);
 
 		// 放置 JLabel
 		for (int j = 0; j < alphabet.length(); j++) {
 			for (int i = 0; i < alphabet.length(); i++) {
 				JLabel label = new JLabel(alphabet.charAt(i) + Integer.toString(j));
-				label.setIcon(new ImageIcon("resources/Cloud.gif", "Cloud"));
+				label.setIcon(new ImageIcon("resources/image/Cloud.gif", "Cloud"));
 				label.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
@@ -99,22 +106,30 @@ public class WindowView {
 							// 图标不是残骸或海面时
 							String result = game.checkUserGuess(label.getText());
 							if (result.equals("Miss")) {
-								label.setIcon(new ImageIcon("resources/Sea.png", "Sea"));
+								label.setIcon(new ImageIcon("resources/image/Sea.png", "Sea"));
 								textArea.append("\n" + game.getNumberOfGuesses() + ": 未击中目标");
+								// 播放 Water_splashes.wav
+								playSound("resources/audio/Water_splashes.wav");
 							} 
 							if (result.equals("Hit")) {
-								label.setIcon(new ImageIcon("resources/Fire.gif", "Wreckage"));
+								label.setIcon(new ImageIcon("resources/image/Fire.gif", "Wreckage"));
 								textArea.append("\n" + game.getNumberOfGuesses() + ": 击中目标！");
+								// 播放 Explosion.wav
+								playSound("resources/audio/Explosion.wav");
 							}
 							if (result.equals("Kill")) {
-								label.setIcon(new ImageIcon("resources/Fire.gif", "Wreckage"));
+								label.setIcon(new ImageIcon("resources/image/Fire.gif", "Wreckage"));
 								textArea.append("\n" + game.getNumberOfGuesses() + ": 击沉目标！");
 								textArea.append("\n" + game.getDescription());
+								// 播放 Explosion.wav
+								playSound("resources/audio/Explosion.wav");
 							}
 							if (game.getBattleshipsList().isEmpty()) {
 								// 所有战舰均被击沉
 								game.finishGame();
 								textArea.append("\n" + game.getDescription());
+								// 播放 Win.wav
+								playSound("resources/audio/Win.wav");
 								int dialogResult = JOptionPane.showConfirmDialog(panel, game.getDescription() + "\n是否重新开始？", "游戏结束", JOptionPane.YES_NO_OPTION);
 								if (dialogResult == JOptionPane.YES_OPTION) {
 									// 重新开始
@@ -138,19 +153,29 @@ public class WindowView {
 					public void mouseEntered(MouseEvent e) {
 						// 显示准星
 						if (((ImageIcon)label.getIcon()).getDescription().equals("Cloud")) {
-							label.setIcon(new ImageIcon("resources/Cloud_pointer.gif", "CloudCursor"));
+							label.setIcon(new ImageIcon("resources/image/Cloud_pointer.gif", "CloudCursor"));
 						}
 					}
 					@Override
 					public void mouseExited(MouseEvent e) {
 						// 消除准星
 						if (((ImageIcon)label.getIcon()).getDescription().equals("CloudCursor")) {
-							label.setIcon(new ImageIcon("resources/Cloud.gif", "Cloud"));
+							label.setIcon(new ImageIcon("resources/image/Cloud.gif", "Cloud"));
 						}
 					}
 				});
 				panel.add(label);
 			}
 		}
+	}
+	public void playSound(String url) {
+	    try {
+	        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(url).getAbsoluteFile());
+	        Clip clip = AudioSystem.getClip();
+	        clip.open(audioInputStream);
+	        clip.start();
+	    } catch(Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 }
