@@ -4,11 +4,15 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class GameHelper {
-	private static final String alphabet = "abcdefg";
-	private int gridLength = 7;
+	private static String alphabet = "abcdefghijklmnopqrstuvwxyz";
+	private int gridLength = GameController.gridLength;
 	private int gridSize = gridLength * gridLength;
 	private int[] grid = new int[gridSize];
 	private int shipCount = 0;
+	
+	public GameHelper() {
+		alphabet = alphabet.substring(0, gridLength);
+	}
 
 	public ArrayList<String> placeBattleship(int shipSize) {
 		// 将战舰放置在方格内

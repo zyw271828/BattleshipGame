@@ -1,6 +1,5 @@
 package com.github.battleshipgame;
 
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
@@ -13,15 +12,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 
 public class WindowView {
 
+	private static String alphabet = "abcdefghijklmnopqrstuvwxyz";
+	private static int gridLength = GameController.gridLength;
+	
 	private JFrame frame;
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
 
 	public static void main(String[] args) {
+		alphabet = alphabet.substring(0, gridLength);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -67,9 +69,9 @@ public class WindowView {
 //		bootLabel.setVisible(false);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(30, 30, 350, 350);
+		panel.setBounds(30, 30, gridLength * 50, gridLength * 50);
 		frame.getContentPane().add(panel);
-		panel.setLayout(new GridLayout(7, 7, 0, 0));
+		panel.setLayout(new GridLayout(gridLength, gridLength, 0, 0));
 		
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Dialog", Font.PLAIN, 18));
@@ -85,7 +87,6 @@ public class WindowView {
 		frame.getContentPane().add(scrollPane);
 
 		// 放置 JLabel
-		String alphabet = "abcdefg";
 		for (int j = 0; j < alphabet.length(); j++) {
 			for (int i = 0; i < alphabet.length(); i++) {
 				JLabel label = new JLabel(alphabet.charAt(i) + Integer.toString(j));
