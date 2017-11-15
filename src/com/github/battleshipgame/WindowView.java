@@ -48,6 +48,7 @@ public class WindowView {
 		alphabet = alphabet.substring(0, gridLength);
 		initialize();
 		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
 	private void initialize() {		
