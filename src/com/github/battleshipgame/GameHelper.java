@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class GameHelper {
-	private static String alphabet = "abcdefghijklmnopqrstuvwxyz";
+	private String alphabet = "abcdefghijklmnopqrstuvwxyz";
 	private int gridLength = GameController.gridLength;
 	private int gridSize = gridLength * gridLength;
 	private int[] grid = new int[gridSize];
